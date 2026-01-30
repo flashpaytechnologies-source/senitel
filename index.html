@@ -2,40 +2,63 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Sentinel | Secure Access</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2300ff9d%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Omniattend</title>
+    <!-- Updated Favicon: Filled Indigo Shield with Checkmark -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z'/></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
-      // Polyfill global for dependencies that expect it (like qrcode/buffer)
+      // Polyfill global and process for dependencies
       window.global = window;
+      window.process = { env: { NODE_ENV: 'production' } };
       
       tailwind.config = {
         darkMode: 'class',
         theme: {
           extend: {
             colors: {
-              'cyber-black': '#050505',
-              'cyber-green': '#00ff9d',
-              'cyber-red': '#ff003c',
-              'cyber-dim': 'rgba(0, 255, 157, 0.1)',
+              brand: {
+                50: '#eef2ff',
+                100: '#e0e7ff',
+                500: '#6366f1', // Indigo
+                600: '#4f46e5',
+                700: '#4338ca',
+              },
+              accent: {
+                500: '#ec4899', // Pink
+                400: '#f472b6',
+              },
+              glass: {
+                100: 'rgba(255, 255, 255, 0.1)',
+                200: 'rgba(255, 255, 255, 0.05)',
+                border: 'rgba(255, 255, 255, 0.15)',
+              },
+              dark: {
+                bg: '#030712', // Gray 950
+                surface: '#111827', // Gray 900
+              }
             },
             fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
               mono: ['"JetBrains Mono"', 'monospace'],
-              display: ['"Rajdhani"', 'sans-serif'],
             },
             animation: {
-              'scan-line': 'scan 2s linear infinite',
-              'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'spin-slow': 'spin 3s linear infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'blob': 'blob 7s infinite',
             },
             keyframes: {
-              scan: {
-                '0%': { top: '0%' },
-                '100%': { top: '100%' },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' },
+              },
+              blob: {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' },
               }
             }
           }
@@ -43,32 +66,58 @@
       }
     </script>
     <style>
-      body {
-        background-color: #050505;
-        color: #e5e5e5;
+      html, body {
+        height: 100%;
         overflow-x: hidden;
-        /* Prevent pull-to-refresh on mobile to feel like an app */
         overscroll-behavior-y: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
       }
-      /* Custom scrollbar for webkit */
+      
+      body {
+        background-color: #030712;
+        color: #f8fafc;
+      }
+
+      /* Custom scrollbar */
       ::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
       }
       ::-webkit-scrollbar-track {
-        background: #000;
+        background: #030712;
       }
       ::-webkit-scrollbar-thumb {
-        background: #333;
-        border-radius: 4px;
+        background: #1f2937;
+        border-radius: 3px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #00ff9d;
+        background: #6366f1;
       }
-      .grid-bg {
-        background-image: 
-          linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px);
-        background-size: 30px 30px;
+      
+      .glass-panel {
+        background: rgba(17, 24, 39, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      
+      .glass-button {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.2s ease;
+      }
+      
+      .glass-button:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Prevent iOS Zoom on focus */
+      @media screen and (max-width: 768px) {
+        input, select, textarea {
+          font-size: 16px !important;
+        }
       }
     </style>
     <script type="importmap">
@@ -79,10 +128,11 @@
         "react-dom": "https://esm.sh/react-dom@18.2.0",
         "react-dom/": "https://esm.sh/react-dom@18.2.0/",
         "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "framer-motion": "https://esm.sh/framer-motion@11.0.8?deps=react@18.2.0,react-dom@18.2.0",
-        "lucide-react": "https://esm.sh/lucide-react@0.344.0?deps=react@18.2.0",
+        "framer-motion": "https://esm.sh/framer-motion@10.16.4?deps=react@18.2.0,react-dom@18.2.0",
+        "lucide-react": "https://esm.sh/lucide-react@0.292.0?deps=react@18.2.0",
         "jsqr": "https://esm.sh/jsqr@1.4.0",
-        "qrcode": "https://esm.sh/qrcode@1.5.3"
+        "qrcode": "https://esm.sh/qrcode@1.5.3",
+        "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.3"
       }
     }
     </script>

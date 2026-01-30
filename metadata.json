@@ -1,5 +1,5 @@
 {
-  "name": "Sentinel",
+  "name": "Omniattend",
   "description": "High-security attendance verification system with biometric gating and TOTP QR rotation.",
   "requestFramePermissions": [
     "camera"
